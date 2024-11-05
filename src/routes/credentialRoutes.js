@@ -25,7 +25,7 @@ router.post('/credentials', async (req, res) => {
          tokenId,
          pTokenId: pTokenId || null,
          credential,
-         password: hashedPassword,
+         password: password,
       });
 
       // DocumentHash 문서 생성
