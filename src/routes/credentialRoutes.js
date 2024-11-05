@@ -10,12 +10,14 @@ router.post('/credentials', async (req, res) => {
    const { uri, tokenId, pTokenId, credential, password, hash } = req.body;
 
    try {
+      // 이 부분은 Issuer 에서 비밀번호 생성 + 해쉬화 둘다 하는거로
+      // 여기선 동일한 bcrypt.hash 함수 + 동일한 salt값으로 나중에 get할때 체크만.
       // 비밀번호 해시화
-      let hashedPassword = null;
-      if (password) {
-         const saltRounds = 10;
-         hashedPassword = await bcrypt.hash(password, saltRounds);
-      }
+      // let hashedPassword = null;
+      // if (password) {
+      //    const saltRounds = 10;
+      //    hashedPassword = await bcrypt.hash(password, saltRounds);
+      // }
 
       // Credential 문서 생성
       const newCredential = new Credential({
