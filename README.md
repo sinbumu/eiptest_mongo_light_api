@@ -1,5 +1,52 @@
 # eiptest_mongo_light_api
 
+### 요구사항
+
+- Node.js 설치
+- PM2 설치 (서버 프로세스 관리를 위해)
+
+### PM2 기반 설치 방법
+
+- pm2 설치
+```
+npm install -g pm2
+```
+
+- 프로젝트 디렉토리로 이동
+```
+cd ~/eiptest_mongo_light_api
+```
+- 의존성 설치
+```
+npm install
+```
+- pm2를 통해 서버 시작
+```
+pm2 start src/app.js --name eiptest_mongo_api
+```
+- 서버 상태 확인
+```
+pm2 status
+```
+
+### 서버 재배포
+```
+cd ~/eiptest_mongo_light_api
+git pull origin main
+npm install
+pm2 restart eiptest_mongo_api
+pm2 status
+```
+### PM2의 추가 명령어
+```
+//로그 확인
+pm2 logs eiptest_mongo_api
+//서버 중지
+pm2 stop eiptest_mongo_api
+//서버 삭제
+pm2 delete eiptest_mongo_api
+```
+
 ### API 설명
 ```
 POST /api/credentials:
