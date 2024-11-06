@@ -69,33 +69,37 @@ router.delete('/credentials/:tokenId', async (req, res) => {
     }
  });
  
- // Credential 조회 API 수정 (isDeleted 체크 추가)
- router.get('/credentials', async (req, res) => {
-    const { tokenId, password } = req.query;
- 
-    try {
-       // isDeleted가 false인 경우만 조회
-       const credentialDoc = await Credential.findOne({ tokenId, isDeleted: false });
- 
-       if (!credentialDoc) {
-          return res.status(404).json({ error: '해당 tokenId에 대한 Credential이 없거나 삭제되었습니다.' });
-       }
- 
-       // 비밀번호가 있을 경우 비교
-       if (credentialDoc.password && password) {
-          const isPasswordValid = await bcrypt.compare(password, credentialDoc.password);
-          if (!isPasswordValid) {
-             return res.status(401).json({ error: '비밀번호가 일치하지 않습니다.' });
-          }
-       } else if (credentialDoc.password && !password) {
-          return res.status(401).json({ error: '비밀번호가 필요합니다.' });
-       }
- 
-       res.status(200).json({ credential: credentialDoc });
-    } catch (error) {
-       console.error(error);
-       res.status(500).json({ error: '서버 오류로 인해 조회에 실패했습니다.' });
-    }
- });
+// Credential 조회 API 수정 (isDeleted 체크 추가)
+router.get('/credentials', async (req, res) => {
+   const { tokenId, password } = req.query;
+
+   try {
+      // isDeleted가 false인 경우만 조회
+      const credentialDoc = await Credential.findOne({ tokenId, isDeleted: false });
+
+      if (!credentialDoc) {
+         return res.status(404).json({ error: '해당 tokenId에 대한 Credential이 없거나 삭제되었습니다.' });
+      }
+
+      // 비밀번호가 있을 경우 비교
+      if (credentialDoc.password && password) {
+         const isPasswordValid = await bcrypt.compare(password, credentialDoc.password);
+         if (!isPasswordValid) {
+            return res.status(401).json({ error: '비밀번호가 일치하지 않습니다.' });
+         }
+      } else if (credentialDoc.password && !password) {
+         return res.status(401).json({ error: '비밀번호가 필요합니다.' });
+      }
+
+      // `isDeleted`와 `password` 필드를 제거
+      const { isDeleted, password: _, ...filteredCredential } = credentialDoc.toObject();
+
+      res.status(200).json({ credential: filteredCredential });
+   } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: '서버 오류로 인해 조회에 실패했습니다.' });
+   }
+});
+
  
  module.exports = router;
