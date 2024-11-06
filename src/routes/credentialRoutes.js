@@ -7,7 +7,7 @@ const router = express.Router();
 
 // 1. 새로운 Credential 및 DocumentHash 추가 API
 router.post('/credentials', async (req, res) => {
-   const { uri, tokenId, pTokenId, credential, password, hash } = req.body;
+   const { uri, tokenId, pTokenId, credential, password, hash, to } = req.body;
 
    try {
       // 이 부분은 Issuer 에서 비밀번호 생성 + 해쉬화 둘다 하는거로
@@ -26,6 +26,7 @@ router.post('/credentials', async (req, res) => {
          pTokenId: pTokenId || null,
          credential,
          password: password,
+         to//mint 할 떄 to address
       });
 
       // DocumentHash 문서 생성
