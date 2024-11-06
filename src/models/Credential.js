@@ -11,11 +11,11 @@ const credentialSchema = new mongoose.Schema({
       unique: true,
       index: true
    },
-   pTokenId: {
+   ItokenId: {  // pTokenId를 ItokenId로 변경
       type: String,
       default: null
    },
-   credential: {
+   Claim: {  // credential을 Claim으로 수정
       type: Object,
       required: true
    },
@@ -23,7 +23,11 @@ const credentialSchema = new mongoose.Schema({
       type: String,
       default: null
    },
-   isDeleted: {  // 논리 삭제 여부 추가
+   to: {  // to 필드 추가
+      type: String,
+      required: true
+   },
+   isDeleted: {  // 논리 삭제 여부
       type: Boolean,
       default: false
    }
