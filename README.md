@@ -34,8 +34,7 @@ pm2 status
 cd ~/eiptest_mongo_light_api
 git pull origin main
 npm install
-pm2 delete eiptest_mongo_api
-pm2 start src/app.js --name eiptest_mongo_api
+pm2 restart eiptest_mongo_api
 pm2 status
 ```
 ### PM2의 추가 명령어
