@@ -7,17 +7,34 @@ const router = express.Router();
 
 // 1. 새로운 Credential 및 DocumentHash 추가 API
 router.post('/credentials', async (req, res) => {
-   const { uri, tokenId, ItokenId, Claim, password, hash, to } = req.body;
+   const { 
+      uri, 
+      tokenId, 
+      ItokenId, 
+      Claim, 
+      password, 
+      hash, 
+      to,
+      issuanceTime,
+      expirationTime,
+      optionalData
+   } = req.body;
 
    try {
-      // 이 부분은 Issuer 에서 비밀번호 생성 + 해쉬화 둘다 하는거로
-      // 여기선 동일한 bcrypt.hash 함수 + 동일한 salt값으로 나중에 get할때 체크만.
-      // 비밀번호 해시화
-      // let hashedPassword = null;
-      // if (password) {
-      //    const saltRounds = 10;
-      //    hashedPassword = await bcrypt.hash(password, saltRounds);
-      // }
+      // 필수값 검사
+      if (!uri || !tokenId || !Claim || !hash || !to || issuanceTime === undefined || expirationTime === undefined) {
+         return res.status(400).json({ error: 'uri, tokenId, Claim, hash, to, issuanceTime, expirationTime는 필수값입니다.' });
+      }
+
+      // `issuanceTime`과 `expirationTime`이 숫자인지 확인
+      if (isNaN(issuanceTime) || isNaN(expirationTime)) {
+         return res.status(400).json({ error: 'issuanceTime과 expirationTime은 숫자여야 합니다.' });
+      }
+
+      // `issuanceTime`이 `expirationTime`보다 이전인지 확인
+      if (issuanceTime > expirationTime) {
+         return res.status(400).json({ error: 'issuanceTime은 expirationTime보다 이전이어야 합니다.' });
+      }
 
       // Credential 문서 생성
       const newCredential = new Credential({
@@ -26,7 +43,10 @@ router.post('/credentials', async (req, res) => {
          ItokenId: ItokenId || null,
          Claim,
          password: password,
-         to//mint 할 떄 to address
+         to, // mint 할 때 to address
+         issuanceTime,
+         expirationTime,
+         optionalData: optionalData || null
       });
 
       // DocumentHash 문서 생성
