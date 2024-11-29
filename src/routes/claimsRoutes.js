@@ -5,7 +5,7 @@ const Claim = require('../models/Claim');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 
-// Claim 저장 API
+// Claim 저장 API (기존 코드 유지)
 router.post('/claims', async (req, res) => {
     const { Claim: claimData, password, claimKey } = req.body;
 
@@ -38,7 +38,7 @@ router.post('/claims', async (req, res) => {
     }
 });
 
-// Claim 조회 API (claimKey와 password를 쿼리 파라미터로 받음)
+// Claim 조회 API (기존 코드 유지)
 router.get('/claims', async (req, res) => {
     const { claimKey, password } = req.query;
 
@@ -71,6 +71,39 @@ router.get('/claims', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: '서버 오류로 인해 조회에 실패했습니다.' });
+    }
+});
+
+// 1. Claim 수정 API 추가
+router.put('/claims', async (req, res) => {
+    const { claimKey, newClaim } = req.body;
+
+    // 필수값 검사
+    if (!claimKey || !newClaim) {
+        return res.status(400).json({ error: 'claimKey와 newClaim은 필수값입니다.' });
+    }
+
+    try {
+        // Claim 문서 찾기
+        const claimDoc = await Claim.findOne({ claimKey });
+
+        if (!claimDoc) {
+            return res.status(404).json({ error: '해당 claimKey에 대한 Claim이 없습니다.' });
+        }
+
+        // 비밀번호 검증 (시연용이므로 생략하거나 비활성화 가능)
+        // 여기서는 비밀번호 없이도 수정 가능하도록 합니다.
+
+        // Claim 데이터 수정
+        claimDoc.Claim = newClaim;
+
+        // 수정된 Claim 저장
+        await claimDoc.save();
+
+        res.status(200).json({ message: 'Claim 수정 성공', claimKey });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: '서버 오류로 인해 수정에 실패했습니다.' });
     }
 });
 
